@@ -76,6 +76,8 @@ loadResources({
   vs: 'shader/simple.vs.glsl',
   fs: 'shader/simple.fs.glsl',
   //TASK 5-3
+  staticcolorvs: 'shader/static_color.vs.glsl'
+
 }).then(function (resources /*an object containing our keys with the loaded resources*/) {
   init(resources);
 
@@ -104,20 +106,24 @@ function init(resources) {
   rootNode = new SceneGraphNode();
 
   //TASK 3-1
-
+  var quadTransformMatrix = glm.rotateX(90);
+  quadTransformMatrix = mat4.multiply(mat4.create(), quadTransformMatrix, glm.translate(0.0,-0.5,0));
+  quadTransformMatrix = mat4.multiply(mat4.create(), quadTransformMatrix, glm.scale(0.5,0.5,1));
   //TASK 3-2
-
+  var quadTransformationNode = new TransformationSceneGraphNode(quadTransformMatrix);
+  rootNode.append(quadTransformationNode);
   //TASK 5-4
-
+  var staticColorShaderNode = new ShaderSceneGraphNode(createProgram(gl, resources.staticcolorvs, resources.fs));
+  quadTransformationNode.append(staticColorShaderNode);
   //TASK 2-2
-
+  var quadNode = new QuadRenderNode();
+  staticColorShaderNode.append(quadNode);
   //TASK 4-2
 
   createRobot(rootNode);
 }
 
 function initQuadBuffer() {
-
   //create buffer for vertices
   quadVertexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexBuffer);
@@ -146,8 +152,48 @@ function initCubeBuffer() {
 }
 
 function createRobot(rootNode) {
+ //TASK 6-1
 
-  //TASK 6-1
+  //transformations of whole body
+  var robotTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.rotateY(animatedAngle/2));
+  robotTransformationMatrix = mat4.multiply(mat4.create(), robotTransformationMatrix, glm.translate(0.3,0.9,0));
+  robotTransformationNode = new TransformationSceneGraphNode(robotTransformationMatrix);
+  rootNode.append(robotTransformationNode);
+
+  //body
+  cubeNode = new CubeRenderNode();
+  robotTransformationNode.append(cubeNode);
+
+  //transformation of head
+  var headTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.rotateY(animatedAngle));
+  headTransformationMatrix = mat4.multiply(mat4.create(), headTransformationMatrix, glm.translate(0.0,0.4,0));
+  headTransformationMatrix = mat4.multiply(mat4.create(), headTransformationMatrix, glm.scale(0.4,0.33,0.5));
+  headTransformationNode = new TransformationSceneGraphNode(headTransformationMatrix);
+  robotTransformationNode.append(headTransformationNode);
+
+  //head
+  cubeNode = new CubeRenderNode();
+  headTransformationNode.append(cubeNode);
+
+  //transformation of left leg
+  var leftLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(0.16,-0.6,0));
+  leftLegTransformationMatrix = mat4.multiply(mat4.create(), leftLegTransformationMatrix, glm.scale(0.2,1,1));
+  var leftLegTransformationNode = new TransformationSceneGraphNode(leftLegTransformationMatrix);
+  robotTransformationNode.append(leftLegTransformationNode);
+
+  //left leg
+  cubeNode = new CubeRenderNode();
+  leftLegTransformationNode.append(cubeNode);
+
+  //transformation of right leg
+  var rightLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(-0.16,-0.6,0));
+  rightLegTransformationMatrix = mat4.multiply(mat4.create(), rightLegTransformationMatrix, glm.scale(0.2,1,1));
+  var rightLegtTransformationNode = new TransformationSceneGraphNode(rightLegTransformationMatrix);
+  robotTransformationNode.append(rightLegtTransformationNode);
+
+  //right leg
+  cubeNode = new CubeRenderNode();
+  rightLegtTransformationNode.append(cubeNode);
 }
 
 /**
@@ -164,20 +210,29 @@ function render(timeInMilliseconds) {
   gl.enable(gl.DEPTH_TEST);
 
   //TASK 1-1
+  gl.enable(gl.BLEND);
   //TASK 1-2
+gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
   //activate this shader program
   gl.useProgram(shaderProgram);
 
   //TASK 6-2
+  var robotTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.rotateY(animatedAngle/2));
+  robotTransformationMatrix = mat4.multiply(mat4.create(), robotTransformationMatrix, glm.translate(0.3,0.9,0));
+  robotTransformationNode.setMatrix(robotTransformationMatrix);
 
+  var headTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.rotateY(animatedAngle));
+  headTransformationMatrix = mat4.multiply(mat4.create(), headTransformationMatrix, glm.translate(0.0,0.4,0));
+  headTransformationMatrix = mat4.multiply(mat4.create(), headTransformationMatrix, glm.scale(0.4,0.33,0.5));
+  headTransformationNode.setMatrix(headTransformationMatrix);
   context = createSceneGraphContext(gl, shaderProgram);
 
   rootNode.render(context);
 
   //TASK 2-0 comment renderQuad & renderRobot out:
-  renderQuad(context.sceneMatrix, context.viewMatrix);
-  renderRobot(context.sceneMatrix, context.viewMatrix);
+  //renderQuad(context.sceneMatrix, context.viewMatrix);
+  //renderRobot(context.sceneMatrix, context.viewMatrix);
 
   //request another render call as soon as possible
   requestAnimationFrame(render);
@@ -209,7 +264,7 @@ function renderQuad(sceneMatrix, viewMatrix) {
 
   //set alpha value for blending
   //TASK 1-3
-
+  gl.uniform1f(gl.getUniformLocation(context.shader, "u_alpha"), 1);
   // draw the bound data as 6 vertices = 2 triangles starting at index 0
   gl.drawArrays(gl.TRIANGLES, 0, 6);
 }
@@ -228,6 +283,7 @@ function renderRobot(sceneMatrix, viewMatrix) {
 
   //set alpha value for blending
   //TASK 1-3
+  gl.uniform1f(gl.getUniformLocation(context.shader, "u_alpha"),0.5);
 
   //transformations on whole body
   sceneMatrix = mat4.multiply(mat4.create(), sceneMatrix, glm.rotateY(animatedAngle/2));
@@ -363,16 +419,71 @@ class QuadRenderNode extends SceneGraphNode {
 
   render(context) {
 
-    //TASK 2-1
+  //TASK 2-1
+  //setting the model view and projection for the shader (needs to be done every time the shader changes)
+  setUpModelViewMatrix(context.sceneMatrix, context.viewMatrix);
+  gl.uniformMatrix4fv(gl.getUniformLocation(context.shader, 'u_projection'), false, context.projectionMatrix);
 
-    //render children
-    super.render(context);
+
+  var positionLocation = gl.getAttribLocation(context.shader, 'a_position');
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadVertexBuffer);
+  gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(positionLocation);
+
+  var colorLocation = gl.getAttribLocation(context.shader, 'a_color');
+  gl.bindBuffer(gl.ARRAY_BUFFER, quadColorBuffer);
+  gl.vertexAttribPointer(colorLocation, 4, gl.FLOAT, false, 0, 0);
+  gl.enableVertexAttribArray(colorLocation);
+
+  //set alpha value for blending
+  //TASK 1-3
+  gl.uniform1f(gl.getUniformLocation(context.shader, "u_alpha"), 1);
+  // draw the bound data as 6 vertices = 2 triangles starting at index 0
+  gl.drawArrays(gl.TRIANGLES, 0, 6);
+
+  //render children
+  super.render(context);
   }
 }
 
 //TASK 4-1
 //Implement class CubeRenderNode
+class CubeRenderNode extends SceneGraphNode {
+  /**
+   * no parameters
+   */
+  constructor() {
+    super();
+  }
 
+  render(context) {
+
+  //TASK 2-1
+  //setting the model view and projection for the shader (needs to be done every time the shader changes)
+  setUpModelViewMatrix(context.sceneMatrix, context.viewMatrix);
+  gl.uniformMatrix4fv(gl.getUniformLocation(context.shader, 'u_projection'), false, context.projectionMatrix);
+
+  var positionLocation = gl.getAttribLocation(context.shader, 'a_position');
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexBuffer);
+  gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false,0,0) ;
+  gl.enableVertexAttribArray(positionLocation);
+
+  var colorLocation = gl.getAttribLocation(context.shader, 'a_color');
+  gl.bindBuffer(gl.ARRAY_BUFFER, cubeColorBuffer);
+  gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false,0,0) ;
+  gl.enableVertexAttribArray(colorLocation);
+
+  //set alpha value for blending
+  //TASK 1-3
+  gl.uniform1f(gl.getUniformLocation(context.shader, "u_alpha"), 0.5);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, cubeIndexBuffer);
+  gl.drawElements(gl.TRIANGLES, cubeIndices.length, gl.UNSIGNED_SHORT, 0);
+
+  //render children
+  super.render(context);
+  }
+}
 //TASK 3-0
 /**
  * a transformation node, i.e applied a transformation matrix to its successors
