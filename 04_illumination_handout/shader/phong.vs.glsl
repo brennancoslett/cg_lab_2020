@@ -20,6 +20,7 @@ uniform vec3 u_light4Pos;
 //output of this shader
 varying vec3 v_normalVec;
 varying vec3 v_eyeVec;
+
 varying vec3 v_lightVec;
 varying vec3 v_light2Vec;
 varying vec3 v_light3Vec;
