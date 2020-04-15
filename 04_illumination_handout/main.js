@@ -96,10 +96,10 @@ function createSceneGraph(gl, resources) {
 
   {
     let light4 = new LightNode();
-    light3.uniform = 'u_light3';
+    light4.uniform = 'u_light4';
     light4.ambient = [0, 0, 0, 1];
-    light4.diffuse = [0, 1, 0, 1];
-    light4.specular = [0, 1, 0, 1];
+    light4.diffuse = [0, 0, 1, 1];
+    light4.specular = [0, 0, 1, 1];
     light4.position = [2, 1, 0];
     light4.append(createLightSphere());
     rotatelight4 = new TransformationSGNode(mat4.create(), [light4]);
@@ -213,7 +213,7 @@ function render(timeInMilliseconds) {
   //TASK 5-2 enable light rotation
   rotateLight2.matrix = glm.rotateY(-timeInMilliseconds*0.1);
   rotateLight3.matrix = glm.rotateY(timeInMilliseconds*0.2);
-  rotateLight4.matrix = glm.rotateY(-timeInMilliseconds*0.8);
+  rotateLight4.matrix = glm.rotateY(-timeInMilliseconds*0.08);
  
   root.render(context);
 

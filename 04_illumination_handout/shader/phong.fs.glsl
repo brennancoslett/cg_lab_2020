@@ -39,11 +39,12 @@ uniform Light u_light;
 //TASK 5-5 use uniform for 2nd light
 uniform Light u_light2;
 uniform Light u_light3;
-uniform Light
+uniform Light u_light4;
 
 //varying vectors for light computation
 varying vec3 v_normalVec;
 varying vec3 v_eyeVec;
+
 varying vec3 v_lightVec;
 varying vec3 v_light2Vec;
 varying vec3 v_light3Vec;
