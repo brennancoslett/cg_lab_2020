@@ -213,7 +213,7 @@ function render(timeInMilliseconds) {
   //TASK 5-2 enable light rotation
   rotateLight2.matrix = glm.rotateY(-timeInMilliseconds*0.1);
   rotateLight3.matrix = glm.rotateY(timeInMilliseconds*0.2);
-  rotateLight4.matrix = glm.rotateY(-timeInMilliseconds* (3.14 / 10));
+  rotateLight4.matrix = glm.rotateY(-timeInMilliseconds* 0.314);
  
   root.render(context);
 
