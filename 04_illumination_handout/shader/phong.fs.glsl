@@ -48,7 +48,7 @@ varying vec3 v_eyeVec;
 varying vec3 v_lightVec;
 varying vec3 v_light2Vec;
 varying vec3 v_light3Vec;
-varying vec4 v_light4Vec;
+varying vec3 v_light4Vec;
 
 vec4 calculateSimplePointLight(Light light, Material material, vec3 lightVec, vec3 normalVec, vec3 eyeVec) {
 	// You can find all built-in functions (min, max, clamp, reflect, normalize, etc.) 
