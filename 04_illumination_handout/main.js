@@ -16,7 +16,7 @@ const camera = {
     y: 0
   }
 };
-
+``
 //load the shader resources using a utility function
 loadResources({
   vs: 'shader/phong.vs.glsl',
@@ -94,17 +94,17 @@ function createSceneGraph(gl, resources) {
     root.append(rotateLight3);
   }
 
-  {
-    let light4 = new LightNode();
-    light4.uniform = 'u_light4';
-    light4.ambient = [0, 0, 0, 1];
-    light4.diffuse = [1, 1, 1, 1];
-    light4.specular = [1, 1, 1, 1];
-    light4.position = [2, .5, .28];
-    light4.append(createLightSphere());
-    rotateLight4 = new TransformationSGNode(mat4.create(), [light4]);
-    root.append(rotateLight4);
-  }
+    {
+      let light4 = new LightNode();
+      light4.uniform = 'u_light4';
+      light4.ambient = [0, 0, 0, 1];
+      light4.diffuse = [1, 1, 1, 1];
+      light4.specular = [1, 1, 1, 1];
+      light4.position = [2, .5, .28];
+      light4.append(createLightSphere());
+      rotateLight4 = new TransformationSGNode(mat4.create(), [light4]);
+      root.append(rotateLight4);
+    }
 
   {
     //TASK 2-4 wrap with material node
@@ -125,7 +125,7 @@ function createSceneGraph(gl, resources) {
 
   {
     //TASK 2-5 wrap with material node
-    let floor = new MaterialNode([new RenderSGNode(makeRect(2, 2))]);
+    let floor = new MaterialNode([new RenderSGNode(makeRect(120, 120))]);
 
     //dark
     floor.ambient = [0, 0, 0, 1];

@@ -157,6 +157,7 @@ function createRobot(rootNode) {
   //transformations of whole body
   var robotTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.rotateY(animatedAngle/2));
   robotTransformationMatrix = mat4.multiply(mat4.create(), robotTransformationMatrix, glm.translate(0.3,0.9,0));
+  robotTransformationMatrix = mat4.multiply(mat4.create(), robotTransformationMatrix, glm.scale(0.2,0.2,0.2));
   robotTransformationNode = new TransformationSceneGraphNode(robotTransformationMatrix);
   rootNode.append(robotTransformationNode);
 
@@ -176,8 +177,8 @@ function createRobot(rootNode) {
   headTransformationNode.append(cubeNode);
 
   //transformation of left leg
-  var leftLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(0.16,-0.6,0));
-  leftLegTransformationMatrix = mat4.multiply(mat4.create(), leftLegTransformationMatrix, glm.scale(0.2,1,1));
+  var leftLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(0.16,-0.6,-.2));
+  leftLegTransformationMatrix = mat4.multiply(mat4.create(), leftLegTransformationMatrix, glm.scale(0.2,1,0.3));
   var leftLegTransformationNode = new TransformationSceneGraphNode(leftLegTransformationMatrix);
   robotTransformationNode.append(leftLegTransformationNode);
 
@@ -186,8 +187,8 @@ function createRobot(rootNode) {
   leftLegTransformationNode.append(cubeNode);
 
   //transformation of right leg
-  var rightLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(-0.16,-0.6,0));
-  rightLegTransformationMatrix = mat4.multiply(mat4.create(), rightLegTransformationMatrix, glm.scale(0.2,1,1));
+  var rightLegTransformationMatrix = mat4.multiply(mat4.create(), mat4.create(), glm.translate(-0.16,-0.6,-0.2));
+  rightLegTransformationMatrix = mat4.multiply(mat4.create(), rightLegTransformationMatrix, glm.scale(0.2,1,0.3));
   var rightLegtTransformationNode = new TransformationSceneGraphNode(rightLegTransformationMatrix);
   robotTransformationNode.append(rightLegtTransformationNode);
 
